@@ -1,9 +1,8 @@
-import { LimitMode } from './limit-mode';
-import { PowerSplit } from './power-split';
-import { TokenWithIndexes } from './token-with-indexes';
+import { LimitMode } from '../src/limit-mode';
+import { PowerSplit } from '../src/power-split';
+import { TokenWithIndexes } from '../src/token-with-indexes';
 
 
-// eslint-disable-next-line valid-jsdoc
 /**
  * Utility function to check if the split returned the right indexes.
  */
@@ -22,6 +21,13 @@ function verifyTokenWithIndexesResult(originalString: string, result: TokenWithI
 }
 
 describe('Splitting with indexes', () => {
+    test('Regex without "g" flags throws and error.', async () => {
+        const input = `Lorem ipsum dolor sit amet`;
+        expect(() => {
+            PowerSplit.splitWithIndexes(input, /\s/);
+        }).toThrow();
+    });
+
     test('Simple regex, regular spaces.', async () => {
         const input = `Lorem ipsum dolor sit amet`;
         const result = PowerSplit.splitWithIndexes(input, /\s/g);
@@ -41,7 +47,6 @@ describe('Splitting with indexes', () => {
     test('Variable length regex, mixed spaces.', async () => {
         const input = `Lorem ipsum dolor \tsit    amet`;
         const result = PowerSplit.splitWithIndexes(input, /\s+/g);
-        console.debug(result);
 
         verifyTokenWithIndexesResult(input, result, [
             [0, 5], [6, 11], [12, 17], [19, 22], [26, 30]
@@ -138,5 +143,51 @@ describe('Splitting returning tokens only', () => {
         const result = PowerSplit.split(input, re, 2, LimitMode.REMAINDER_AS_LAST);
 
         expect(result).toStrictEqual(['Lorem', 'ipsum dolor \tsit    amet']);
+    });
+});
+
+
+describe('Extracting a section of the string', () => {
+    test('Variable length regex, mixed spaces.', async () => {
+        const input = `Lorem ipsum dolor \tsit    amet`;
+        const re = /\s/g;
+        const splitted = PowerSplit.splitWithIndexes(input, re);
+
+        const result = PowerSplit.substring(splitted[2]);
+        expect(result).toStrictEqual('dolor \tsit    amet');
+    });
+
+    test('Variable length regex, mixed spaces, with end', async () => {
+        const input = `Lorem ipsum dolor \tsit    amet`;
+        const re = /\s/g;
+        const splitted = PowerSplit.splitWithIndexes(input, re);
+
+        const result = PowerSplit.substring(splitted[2], splitted[4]);
+        expect(result).toStrictEqual('dolor \tsit');
+    });
+
+    test('Undefined as start', async () => {
+        const result = (PowerSplit as any).substring(undefined);
+        expect(result).toStrictEqual('');
+    });
+});
+
+describe('Cutting the string in half', () => {
+    test('Variable length regex, mixed spaces.', async () => {
+        const input = `Lorem ipsum dolor \tsit    amet`;
+        const re = /\s/g;
+        const splitted = PowerSplit.splitWithIndexes(input, re);
+
+        const result = PowerSplit.cutAt(splitted[2]);
+        expect(result).toStrictEqual(['Lorem ipsum ', 'dolor \tsit    amet']);
+    });
+
+    test('Variable length regex, mixed spaces, token in \'before\'', async () => {
+        const input = `Lorem ipsum dolor \tsit    amet`;
+        const re = /\s/g;
+        const splitted = PowerSplit.splitWithIndexes(input, re);
+
+        const result = PowerSplit.cutAt(splitted[2], false);
+        expect(result).toStrictEqual(['Lorem ipsum dolor', ' \tsit    amet']);
     });
 });

@@ -5,7 +5,7 @@
     },
     "extends": [
         "google"
-    ],
+    ], 
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -16,7 +16,8 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "eslint-plugin-tsdoc"
     ],
     "rules": {
         "indent": ["error", 4],
@@ -24,6 +25,8 @@
         "curly": "off",
         "max-len": ["error", {"code": 120}],
         "comma-dangle": ["error", "never"],
-        "object-curly-spacing": ["error", "always"]
+        "object-curly-spacing": ["error", "always"],
+        "valid-jsdoc": "off", 
+        "tsdoc/syntax": "warn"
     }
 }
