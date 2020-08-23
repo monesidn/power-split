@@ -26,7 +26,7 @@ import { PowerSplit } from 'power-split';
 ## Documentation
 The code is documented using tsdoc so any compatible IDE should display it. Additionally you can find the documentation on the repository-connected github pages at: 
 
-
+https://monesidn.github.io/power-split/
 
 ## Examples
 All the following example are available under the examples folder and can be run using `ts-node`.
